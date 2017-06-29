@@ -1,0 +1,28 @@
+{
+  "restartable": "rs",
+  "verbose": false,
+  "execMap": {
+    "js": "node"
+  },
+  "events": {
+    "restart": "osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
+  },
+  "watch": [
+    "koa.js",
+    "utils/",
+    "middleware/",
+    "build/",
+    "routes/"
+  ],
+  "ignore": [
+    ".git",
+    "node_modules/**",
+    "src/**.**",
+    "public/**",
+    "views"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js json"
+}

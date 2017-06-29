@@ -1,9 +1,7 @@
-const router  = require('koa-router')();
+const fn_index = async (ctx, next) => {
 
-router.get('/',  async (ctx, next) => {
-	ctx.render('index', {
-		title: 'Smooth'
-	});
-});
+};
 
-module.exports = router;
+module.exports = {
+  'GET /': fn_index,
+};

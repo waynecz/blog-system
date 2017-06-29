@@ -1,47 +1,74 @@
 const Koa = require('koa');
 const path = require('path');
 
-const render = require('koa-art-template');
+const LOGGER = require('koa-logger');
 
-const router = require('./routes/index');
-const logger = require('koa-logger');
-const responseTime = require('koa-response-time');
-const static = require('koa-static');
-const bodyParser = require('koa-bodyparser');
+const STATIC = require('koa-static');
+const BODY_PARSER = require('koa-bodyparser');
+const SESSION = require('koa-session2');
+const CORS = require('koa-cors');
 
-const app = new Koa();
+const QUICK_RES = require('./middleware/res-json');
+const controllers = require('./middleware/load-routes');
 
-render(app, {
-  root: path.join(__dirname, 'views'),
-  extname: '.html',
-  debug: process.env.NODE_ENV !== 'production'
-});
+const MongoSessionStore = require('./Store');
 
-app.use(static(
+const APP = new Koa();
+
+// 快捷回复
+QUICK_RES(APP);
+
+APP.use(STATIC(
   path.join(__dirname, './public')
 ));
 
-app.use(logger());
-app.use(responseTime());
+APP.use(async (ctx, next) => {
+  try {
+    await next()
+  } catch (e) {
+    let status = e.status || 500;
+    let message = e.message || '服务器错误';
 
-app.use(bodyParser({
-  onerror: (err, ctx) => {
-    ctx.throw('Error parsing the body information', 422);
+    ctx.status = status;
+
+    ctx.app.emit('error', e, ctx);
+  }
+});
+
+APP.use(SESSION({
+  key: 'SESSION_ID',
+  store: new MongoSessionStore(),
+  httpOnly: false
+}));
+
+APP.use(CORS({
+  origin: 'http://hahaha.ha:8888',
+  credentials: true
+}));
+
+
+APP.use(async (ctx, next) => {
+  console.log('USER: ', ctx.session.user);
+  await next();
+});
+
+APP.use(LOGGER());
+
+APP.use(BODY_PARSER({
+  onerror(err, ctx) {
+    ctx.throw('错误的 body', 422);
   }
 }));
 
-// 开发环境下启用HMR
-if (process.env.NODE_ENV !== 'production') {
-  app.use(require('./middleware/webpackHMR').webpackDevMiddleware);
-  app.use(require('./middleware/webpackHMR').webpackHotMiddleware)
-}
+APP.use(controllers());
 
-app.use(router.routes());
-
-app.on('error', (err, ctx) => {
-  // ctx.status = '404';
-  // ctx.render('404');
-  console.log('404')
+APP.on('error', async (err, ctx) => {
+  console.log(err);
+  ctx.body = {
+    msg: '服务器出错'
+  }
 });
 
-app.listen(3333);
+APP.listen(3333, () => {
+  console.log('listening to port 3333');
+});
