@@ -35,5 +35,25 @@ $disgnDraftWidth: 750;
 }
 
 @mixin ts {
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@mixin scroll-bar {
+  &::-webkit-scrollbar {
+    z-index: 11;
+    width: 5px;
+    height: 5px;
+    background: mix($primary, white, 50);
+
+    &-thumb {
+      border-radius: 5px;
+      background: $primary;
+    }
+  }
+}
+
+
+// 透明度
+@function alpha($color, $percentage) {
+  @return mix($color, transparent, $percentage * 1%)
 }

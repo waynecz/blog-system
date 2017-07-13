@@ -21,7 +21,7 @@ class mongooseStore extends Store {
     }
   }
 
-  async set(content, { sid = this.getID(24), maxAge = 10 * 3600000 } = {}) {
+  async set(content, { sid = this.getID(24), maxAge = 10 * 3600000000 } = {}) {
     // console.log('session set:', content);
     let { doc } = await Session.findOrCreate({ sid });
     doc.content = JSON.stringify(content);

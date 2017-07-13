@@ -1,6 +1,6 @@
 /* normalize start*/
 html {
-    font-family: -apple-system, SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
+    //font-family: -apple-system, SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
     -ms-text-size-adjust: 100%; /* 2 */
     -webkit-text-size-adjust: 100%; /* 2 */
 }
@@ -43,7 +43,7 @@ a {
     transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-a:active, a:hover {
+a:active, a:hover, a:focus {
     outline: 0;
 }
 
@@ -220,17 +220,17 @@ li {
 }
 
 ::selection {
-    background: #333;
+    background: $primary;
     color: #fff;
 }
 
 ::-moz-selection {
-    background: #333;
+    background: $primary;
     color: #fff;
 }
 
 ::-webkit-selection {
-    background: #333;
+    background: $primary;
     color: #fff;
 }
 

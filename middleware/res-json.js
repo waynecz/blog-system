@@ -21,7 +21,7 @@ module.exports = (app) => {
     ctx.body = {
       msg: message,
       success: true,
-      data: Object.assign({}, output)
+      data: Array.isArray(output) ? output : Object.assign({}, output)
     };
   }
 };

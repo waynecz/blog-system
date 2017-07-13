@@ -1,40 +1,47 @@
 <template>
-  <div id="app">
-    <button @click="click">CLICK ME</button>
-    <button @click="click2">CLICK ME2</button>
-
-  </div>
+  <v-app>
+    <v-container fluid>
+      <router-view></router-view>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
-import moment from 'moment'
+  import moment from 'moment'
 
-export default {
-  name: 'app',
-  mounted() {
-  },
-  methods: {
-    click () {
-      this.api.signin({
-        username: 'wayne2',
-        password: '1112'
-      })
-//      this.api.createTag({name: '翁'})
+  export default {
+    name: 'app',
+    mounted() {
     },
-    click2 () {
-//      this.api.createArticle({
-//        title: '休息休息2333',
-//        tags: ['翁', '诚'],
-//        createTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-//        summary: 'xxxx',
-//        content: '#这是标题',
-//      })
-      this.api.getArticles('5954c5c5bb8fa7229b632e2e')
+    methods: {
     }
   }
-}
 </script>
 
+<style lang="stylus">
+  @import '../../node_modules/vuetify/src/stylus/settings/_colors'
+
+  $theme := {
+    primary: $deep-orange.darken-4
+    accent: $red.accent-2
+    secondary: $teal.darken-1
+    info: $blue.lighten-1
+    warning: $amber.darken-2
+    error: $red.accent-4
+    success: $green.lighten-2
+  }
+
+  @import '../../node_modules/vuetify/src/stylus/main'
+</style>
+
 <style lang="scss">
-  @import "sass/index";
+  @import "./sass/index";
+
+  .container {
+    padding: 0;
+  }
+
+  .toasted {
+    font-weight: normal !important;
+  }
 </style>

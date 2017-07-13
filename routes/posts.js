@@ -28,32 +28,68 @@ const updateUsersArticles = (ctx, articleId, addOrDel = true) => {
   User.findByIdAndUpdate(userId, { articles }).exec();
 };
 
-const checkIfIsOwner = async (ctx, model, target) => {
-  let { _doc: { owner } } = await model.findById(ctx.params[target]);
-  if (owner !== ctx.session.user._id) {
-    ctx.toast('这是你的东西吗？');
-    return true
-  }
-  return false
-};
-
+const checkIfIsOwner = require('../utils/check-owner');
 // 接口部分
 const fn_get_posts = async (ctx) => {
-  let articles = await Article.find({}).exec();
+  const {
+    pageSize,
+    pageIndex
+  } = ctx.request.query;
 
-  ctx.give(articles, '获取文章列表成功！');
+
+  let articles = await Article.find({
+  })
+    .sort('-lastEditTime')
+    .skip((Number(pageIndex) - 1) * Number(pageSize))
+    .limit(Number(pageSize))
+    .populate('tags')
+    .populate({
+      path: 'owner',
+      select: 'name'
+    }).exec();
+
+  ctx.give({
+    articles,
+    count: await Article.find({
+    }).count()
+  }, '获取文章列表成功！');
 };
 
 const fn_get_someones_posts = async (ctx, next) => {
+  const {
+    pageSize,
+    pageIndex
+  } = ctx.request.query;
+
   let articles = await Article.find({
     owner: ctx.params.userId
-  }).exec();
+  }).sort('-lastEditTime')
+    .skip((Number(pageIndex) - 1) * Number(pageSize))
+    .limit(Number(pageSize))
+    .populate('tags')
+    .populate({
+      path: 'owner',
+      select: 'name'
+    }).exec();
 
-  ctx.give(articles, '获取文章列表成功！');
+  ctx.give({
+    articles,
+    count: await Article.find({
+      owner: ctx.params.userId
+    }).count()
+  }, '获取个人文章列表成功！');
 };
 
 const fn_get_post_detail = async (ctx, next) => {
-  let article = await Article.findById(ctx.params.postId).populate('tags owner').exec();
+  if (!ctx.params.postId) {
+    ctx.toast('ID ?');
+    return
+  }
+
+  let article = await Article.findById(ctx.params.postId).populate('tags').populate({
+    path: 'owner',
+    select: 'name'
+  }).exec();
 
   ctx.give(article._doc, '获取文章内容成功！');
 };
@@ -93,7 +129,7 @@ const fn_create_post = async (ctx) => {
 };
 
 const fn_update_post = async (ctx) => {
-  const data = Object.assign(ctx.request.body, { lastEditTime: moment().format('YYYY-MM-DD HH:mm:ss') });
+  const data = Object.assign(ctx.request.body, { lastEditTime: moment().toDate() });
 
   if (data.tags) {
     data.tags = await getTagsId(data.tags);
@@ -166,6 +202,16 @@ const fn_del_tag = async (ctx) => {
 
 };
 
+const fn_get_tag = async (ctx) => {
+
+  let tags = await Tag.find().exec();
+
+  ctx.give({
+    list: tags
+  }, '获取 tag 成功！');
+
+};
+
 module.exports = {
   'GET /posts': fn_get_posts,
   'GET /posts/user/:userId': fn_get_someones_posts,
@@ -173,6 +219,7 @@ module.exports = {
   'POST /posts ?': fn_create_post,
   'POST /posts/:postId ?': fn_update_post, // PATCH 暂时失效了
   'DELETE /posts/:postId ?': fn_delete_post,
+  'GET /tags': fn_get_tag,
   'POST /tags ?': fn_create_tag,
   'DELETE /tags/:tagId ?': fn_del_tag
 };

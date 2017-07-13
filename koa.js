@@ -18,9 +18,7 @@ const APP = new Koa();
 // 快捷回复
 QUICK_RES(APP);
 
-APP.use(STATIC(
-  path.join(__dirname, './public')
-));
+APP.use(STATIC(path.join(__dirname, './public')));
 
 APP.use(async (ctx, next) => {
   try {
@@ -45,7 +43,6 @@ APP.use(CORS({
   origin: 'http://hahaha.ha:8888',
   credentials: true
 }));
-
 
 APP.use(async (ctx, next) => {
   console.log('USER: ', ctx.session.user);

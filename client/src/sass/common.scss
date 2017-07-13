@@ -1,8 +1,26 @@
-// 这里写具体应用的结构样式，类似app的架构
+@font-face {
+  font-family: 'hyjk';
+  src: url(/static/fonts/HYJK.ttf);
+}
+
+@font-face {
+  font-family: 'hyss';
+  src: url(/static/fonts/HYSS.ttf);
+}
+
 body {
-    @include res('m') {
-        width: 100%;
-        overflow-x: hidden;
-        overflow-y: scroll!important;
-    }
+  @include scroll-bar;
+
+  &.night {
+    --font-color: var(--dark);
+    --bg:var(--yellow);
+  }
+
+  &.dusk {
+    --font-color: var(--dark);
+    --bg: var(--yellow);
+  }
+
+  background: var(--bg);
+  color: var(--font-color)
 }

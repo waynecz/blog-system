@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Vue from 'vue'
 
 const HOST = 'http://127.0.0.1:3333';
 
@@ -13,13 +14,15 @@ const thenHandelr = (option = {}) => {
     if (res.data.success) {
       return res.data
     } else {
-      console.warn(res.data.msg || setting.errmsg);
+      if (!window.location.href.includes('sign')) {
+        Vue.toasted.show(res.data.msg || setting.errmsg);
+      }
       return res.data
     }
   }
 };
 
-const fetch = {
+const FETCH = {
   get(url, params, option) {
     return axios.get(HOST + url, {
       params,
@@ -42,50 +45,72 @@ const fetch = {
 };
 
 const APIS = {
+  userinfo() {
+    const url = '/userinfo';
+    return FETCH.get(url);
+  },
   signup(data) {
     const url = '/signup';
-    return fetch.post(url, data);
+    return FETCH.post(url, data);
   },
   signin(data) {
     const url = '/signin';
-    return fetch.post(url, data);
+    return FETCH.post(url, data);
   },
   signout() {
     const url = '/signout';
-    return fetch.get(url);
+    return FETCH.get(url);
   },
   createTag(data) {
     const url = '/tags';
-    return fetch.post(url, data);
+    return FETCH.post(url, data);
+  },
+  getTags() {
+    const url = '/tags';
+    return FETCH.get(url);
   },
   delTag(id) {
     const url = `/tags/${id}`;
-    return fetch.del(url, { errmsg: '删除失败' });
+    return FETCH.del(url, { errmsg: '删除失败' });
   },
   createArticle(data) {
     const url = '/posts';
-    return fetch.post(url, data);
+    return FETCH.post(url, data);
   },
   readArticle(id) {
-    const url =  `/posts/${id}`;
-    return fetch.get(url);
+    const url = `/posts/${id}`;
+    return FETCH.get(url);
   },
   delArticle(id) {
     const url = `/posts/${id}`;
-    return fetch.del(url, { errmsg: '删除失败' });
+    return FETCH.del(url, { errmsg: '删除失败' });
   },
   updateArticle(id, data) {
     const url = `/posts/${id}`;
-    return fetch.post(url, data, { errmsg: '更新文章失败' });
+    console.log(id)
+    return FETCH.post(url, data, { errmsg: '更新文章失败' });
   },
-  getArticles() {
+  getArticles(params) {
     const url = `/posts`;
-    return fetch.get(url, null, { errmsg: '获取文章列表失败' });
+    return FETCH.get(url, params, { errmsg: '获取文章列表失败' });
   },
-  getSomeonesArticles(id) {
+  getSomeonesArticles(id, params) {
     const url = `/posts/user/${id}`;
-    return fetch.get(url, { errmsg: '获取文章列表失败' });
+    return FETCH.get(url, params, { errmsg: '获取文章列表失败' });
+  },
+  comment(data) {
+    const url = `/comments`;
+    return FETCH.post(url, data, { errmsg: '评论失败' });
+  },
+  modifyComment(id, data) {
+    const url = `/comments/${id}`;
+    return FETCH.post(url, data, { errmsg: '修改评论失败' });
+  },
+  delComment(id) {
+    const url = `/comments/${id}`;
+    return FETCH.del(url, { errmsg: '删除评论失败' });
   }
+
 };
 
 export default APIS

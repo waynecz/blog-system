@@ -40,9 +40,9 @@ const fn_signup = async (ctx) => {
   let createTime = Date.now();
 
   let newUser = await new User({ name, username, password, createTime }).save();
-  ctx.session.user = newUser;
+  ctx.session.user = newUser._doc;
 
-  ctx.give(newUser);
+  ctx.give({name: newUser._doc.name, username: newUser._doc.username});
 
 };
 
