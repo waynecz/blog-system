@@ -22,6 +22,9 @@ export default new Router({
           path: 'sign',
           name: 'sign',
           component: Sign,
+          meta: {
+            notNeedAuth: true
+          }
         },
         {
           path: 'home',
@@ -37,7 +40,8 @@ export default new Router({
                 banner: true,
                 toolbar: false,
                 nav: true,
-                fixedHead: true
+                fixedHead: true,
+                notNeedAuth: true
               }
             },
             {
@@ -51,7 +55,8 @@ export default new Router({
                 nav: false,
                 fixedHead: true,
                 noTabs: true,
-                articlesToolbar: true
+                articlesToolbar: true,
+                notNeedAuth: true
               }
             },
             {

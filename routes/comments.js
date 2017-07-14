@@ -1,17 +1,19 @@
 const checkIfIsOwner = require('../utils/check-owner');
 const Comment = require('../models/comment');
+const Article = require('../models/article');
+
 const moment = require('moment');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const fn_create_comment = async (ctx) => {
   const {
     content,
-    article
+    articleId
   } = ctx.request.body;
 
   let newComment = await new Comment({
     content,
-    article: new ObjectId(article),
+    article: new ObjectId(articleId),
     owner: {
       name: ctx.session.user.name,
       id: ctx.session.user._id
@@ -19,7 +21,13 @@ const fn_create_comment = async (ctx) => {
     lastEditTime: moment().format('YYYY-MM-DD HH:mm:ss')
   }).save();
 
-  ctx.give(newComment, '评论成功！');
+  let article = await Article.findById(articleId).exec();
+
+  article.comments.push(newComment._doc._id);
+
+  article.save();
+
+  ctx.give(newComment._doc, '评论成功！');
 
 };
 

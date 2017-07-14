@@ -25,7 +25,7 @@
         </v-btn>
         <v-list>
           <v-list-tile @click.native="signout">
-            <v-list-tile-title>退出登录</v-list-tile-title>
+            <v-list-tile-title>{{actionText}}</v-list-tile-title>
           </v-list-tile>
         </v-list>
       </v-menu>
@@ -41,21 +41,6 @@
       <img src="/static/img/article_banner.jpg" class="article__banner-img">
       <h1 class="article__title">{{articleTitle}}</h1>
     </div>
-
-    <!-- ARTICLES_TOOLBAR-->
-    <v-toolbar v-if="articlesToolbar" :class="theme" dark>
-      <v-spacer></v-spacer>
-
-      <v-btn icon v-tooltip:top="{ html: '删除文章' }">
-        <v-icon>delete_forever</v-icon>
-      </v-btn>
-
-      <v-btn icon v-tooltip:top="{ html: '编辑文章' }">
-        <v-icon>create</v-icon>
-      </v-btn>
-
-      <v-toolbar-title v-if="hasToolbar" slot="extension">{{title}}</v-toolbar-title>
-    </v-toolbar>
 
     <!-- TABS-->
     <v-tabs v-if="!noTabs" dark fixed centered v-model="currentPage" @input="changePage">
@@ -76,7 +61,7 @@
           </v-btn>
           <v-list>
             <v-list-tile @click.native="signout">
-              <v-list-tile-title>退出登录</v-list-tile-title>
+              <v-list-tile-title>{{actionText}}</v-list-tile-title>
             </v-list-tile>
           </v-list>
         </v-menu>
@@ -97,7 +82,7 @@
     </v-tabs>
 
     <!-- CONTENT-->
-    <router-view :currentPage="currentPage" @changeTitle="changeTitle" @changeArticleTitle="changeArticleTitle"
+    <router-view :user="user" :logined="logined" :currentPage="currentPage" @changeTitle="changeTitle" @changeArticleTitle="changeArticleTitle"
                  class="content"></router-view>
   </div>
 </template>
@@ -130,8 +115,20 @@
             path: 'mine'
           }
         ],
-        theme: 'deep-orange darken-4'
+        theme: 'primary',
+        user: {
+          name: null,
+          id: null
+        }
       };
+    },
+    computed: {
+      logined () {
+        return this.user._id
+      },
+      actionText () {
+        return this.logined ? '退出登录' : '登录'
+      }
     },
     created () {
       this.getUserInfo();
@@ -146,6 +143,9 @@
         this.fixedHead = this.$route.meta.fixedHead;
         this.noTabs = this.$route.meta.noTabs;
         this.articlesToolbar = this.$route.meta.articlesToolbar;
+        if (this.$route.path === '/home/articles') {
+          this.currentPage = 'all';
+        }
       },
       back() {
         this.$router.push('/home/articles')
@@ -162,10 +162,17 @@
       async getUserInfo () {
         const res = await this.api.userinfo();
         if (res.success) {
+          this.user = res.data;
           this.username = res.data.name
+        } else {
+          this.menus.pop();
         }
       },
       async signout () {
+        if (!this.logined) {
+          this.$router.push('/sign');
+          return
+        }
         const res = await this.api.signout();
         if (res.success) {
           this.$toasted.success('登出成功！');

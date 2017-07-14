@@ -35,19 +35,12 @@
     <div class="write__box">
       <textarea id="PLAY" class="write__area"></textarea>
     </div>
-
     <!-- action-->
-    <v-btn
-      dark
-      primary
-      fab
-      fixed
-      bottom
-      right
-      @click.native="save"
-    >
-      <v-icon>cloud_done</v-icon>
-    </v-btn>
+    <v-layout row justify-center>
+      <v-flex xs8>
+        <v-btn primary block large @click.native="save">post it</v-btn>
+      </v-flex>
+    </v-layout>
 
   </div>
 </template>
@@ -112,7 +105,8 @@
         const res = await this.api.createArticle(this.form);
 
         if (res.success) {
-          this.$toasted.success('保存成功!')
+          this.$toasted.success('保存成功!');
+          this.$router.push('/home/articles');
         }
 
         this.loading = false;

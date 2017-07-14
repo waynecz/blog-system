@@ -22,7 +22,7 @@ const updateUsersArticles = (ctx, articleId, addOrDel = true) => {
   if (addOrDel) {
     articles.concat(articleId);
   } else {
-    articles.splice(articleId.indexOf(articles), 1)
+    articles.splice(articleId.toString().indexOf(articles), 1)
   }
 
   User.findByIdAndUpdate(userId, { articles }).exec();
@@ -36,9 +36,7 @@ const fn_get_posts = async (ctx) => {
     pageIndex
   } = ctx.request.query;
 
-
-  let articles = await Article.find({
-  })
+  let articles = await Article.find({})
     .sort('-lastEditTime')
     .skip((Number(pageIndex) - 1) * Number(pageSize))
     .limit(Number(pageSize))
@@ -50,8 +48,7 @@ const fn_get_posts = async (ctx) => {
 
   ctx.give({
     articles,
-    count: await Article.find({
-    }).count()
+    count: await Article.find({}).count()
   }, '获取文章列表成功！');
 };
 
@@ -86,10 +83,13 @@ const fn_get_post_detail = async (ctx, next) => {
     return
   }
 
-  let article = await Article.findById(ctx.params.postId).populate('tags').populate({
-    path: 'owner',
-    select: 'name'
-  }).exec();
+  let article = await Article.findById(ctx.params.postId)
+    .populate('tags')
+    .populate('comments')
+    .populate({
+      path: 'owner',
+      select: 'name'
+    }).exec();
 
   ctx.give(article._doc, '获取文章内容成功！');
 };

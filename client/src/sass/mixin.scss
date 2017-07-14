@@ -1,21 +1,19 @@
 $breakpoints: (
-        'm' : (max-width: 830px),
-        'x' : (max-width: 1200px),
-        'p' : (min-width: 831px),
+  'm' : (max-width: 830px),
+  'x' : (max-width: 1200px),
+  'p' : (min-width: 831px),
 );
 
 // 打断点的快捷写法，调用参考common.scss里的
 @mixin res($name) {
-    // 循环断点Map，如果存在则返回
-    @if map-has-key($breakpoints, $name) {
-        @media #{inspect(map-get($breakpoints, $name))} {
-            @content;
-        }
+  // 循环断点Map，如果存在则返回
+  @if map-has-key($breakpoints, $name) {
+    @media #{inspect(map-get($breakpoints, $name))} {
+      @content;
     }
-
-    @else {
-        @warn "没有这个断点哦 `#{$breakpoint}`。";
-    }
+  } @else {
+    @warn "没有这个断点哦 `#{$breakpoint}`。";
+  }
 }
 
 // 移动端设计稿宽度，单位px
@@ -23,19 +21,19 @@ $disgnDraftWidth: 750;
 
 // 作响应式的时候根据设计稿得出元素具体rem大小，比如一个元素在设计稿中宽度是200px，那么他的真实宽度就是 @include r(300px)
 @function r($n) {
-    @return ($n / $disgnDraftWidth) * 20 + rem;
+  @return ($n / $disgnDraftWidth) * 20 + rem;
 }
 
 @function t($time) {
-    @return $time +s cubic-bezier(0.4, 0, 0.2, 1);
+  @return $time +s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @mixin ty {
-    transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 @mixin ts {
-    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @mixin scroll-bar {
@@ -52,8 +50,55 @@ $disgnDraftWidth: 750;
   }
 }
 
-
 // 透明度
 @function alpha($color, $percentage) {
   @return mix($color, transparent, $percentage * 1%)
+}
+
+@function longshadow($color_a,$color_b,$stepnum, $opacity: 1) {
+
+  $gradient_steps: null;
+
+  @for $i from 1 through $stepnum {
+
+    $weight: ( ( $i - 1 ) / $stepnum ) * 100;
+
+    $colour_mix: mix($color_b, rgba($color_a, $opacity), $weight);
+
+    $seperator: null;
+
+    @if ($i != $stepnum) {
+      $seperator: #{','};
+    }
+
+    $gradient_steps: append(#{$gradient_steps}, #{$i}px #{$i}px $colour_mix $seperator);
+
+  }
+
+  @return $gradient_steps;
+
+}
+
+@mixin shade($type, $color: #3498db, $depth: 20, $angle: 135deg, $long: false, $fade: false) {
+  $angle: ($angle - 90);
+  $x: 1.5 * cos($angle) + 0px;
+  $y: 1.5 * sin($angle) + 0px;
+  $darken: (lightness($color)/$depth)/2;
+  $opacify: 0;
+  $shadow: ();
+
+  @if $long == true{
+    $darken:0;
+  }
+
+  @if $fade == true {
+    $opacify: (opacity($color)/$depth) ;
+    // added this for rendering in some browsers, remove if you like.
+    @include translateZ(0);
+  }
+
+  @for $i from 1 through $depth {
+    $shadow: $shadow, $i*$x $i*$y 0 hsla(hue($color) , saturation($color), (lightness($color) - ($i * $darken)), 1 - ($i * $opacify));
+  }
+  #{$type}-shadow: $shadow;
 }

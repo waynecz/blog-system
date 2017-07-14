@@ -116,7 +116,8 @@
         const res = await this.api.updateArticle(this.postId, this.form);
 
         if (res.success) {
-
+          this.$toasted.success('保存成功!');
+          this.$router.push('/home/articles');
         }
 
         this.loading = false;

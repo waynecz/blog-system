@@ -22,6 +22,7 @@
     </div>
 
     <v-btn
+      v-if="logined"
       dark
       primary
       fab
@@ -40,7 +41,7 @@
 
   export default {
     name: 'articles',
-    props: ['currentPage'],
+    props: ['currentPage', 'logined', 'user'],
     data() {
       return {
         posts: [],
@@ -60,7 +61,7 @@
         if (!flag) {
           res = await this.api.getArticles(this.params);
         } else {
-          res = await this.api.getSomeonesArticles(window.USER._id, this.params);
+          res = await this.api.getSomeonesArticles(this.user._id, this.params);
         }
 
         if (res.success) {

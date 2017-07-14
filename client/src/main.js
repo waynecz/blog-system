@@ -16,6 +16,10 @@ Vue.use(Toasted, {
 Vue.config.productionTip = false;
 
 router.beforeEach(async (to, form, next) => {
+  if (to.meta.notNeedAuth) {
+    next()
+    return
+  }
   const res = await API.userinfo();
   window.USER = res.data;
 
