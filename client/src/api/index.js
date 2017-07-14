@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Vue from 'vue'
 
-const HOST = 'http://127.0.0.1:3333';
+const HOST = 'http://localhost:3333';
 
 const catchHandler = (e) => {
   console.warn(e);

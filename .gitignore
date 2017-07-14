@@ -10,3 +10,5 @@ gen
 /node_modules
 *.log
 /log
+/public/index.html
+/public/static/**

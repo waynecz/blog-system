@@ -53,7 +53,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: config.build.index,
-      template: 'index.html',
+      template: 'client/index.html',
       inject: true,
       minify: {
         removeComments: true,
@@ -63,9 +63,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency',
-      serviceWorkerLoader: `<script>${fs.readFileSync(path.join(__dirname,
-        './service-worker-prod.js'), 'utf-8')}</script>`
+      chunksSortMode: 'dependency'
     }),
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({

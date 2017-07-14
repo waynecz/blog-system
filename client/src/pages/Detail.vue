@@ -102,7 +102,7 @@
 
         if (res.success) {
           this.$toasted.success('删除成功!');
-          this.$router.push('/home/articles');
+          this.$router.push(`/articles/articles`);
         }
       },
       async saySomething () {

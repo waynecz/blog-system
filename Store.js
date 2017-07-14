@@ -1,8 +1,7 @@
 const { Store } = require('koa-session2');
 const mongoose = require('mongoose');
 const Session = require('./models/session');
-
-mongoose.connect('mongodb://localhost:27017/Blogcz').then(res => {}).catch(e => console.log(e));
+mongoose.connect('mongodb://451578533:azhou921025cheng@ds034807.mlab.com:34807/wayneboooo/Blogcz').then(res => {}).catch(e => console.log(e));
 
 class mongooseStore extends Store {
   constructor() {
