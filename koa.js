@@ -40,7 +40,7 @@ APP.use(SESSION({
 }));
 
 APP.use(CORS({
-  origin: '*',
+  origin: 'http://hahaha.ha:8888, http://localhost:3333/#/',
   credentials: true
 }));
 
